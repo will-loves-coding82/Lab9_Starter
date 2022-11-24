@@ -58,7 +58,7 @@
         <select name="operator" id="operator">
           <option>+</option>
           <option>-</option>
-          <option>*</option>
+          <option>messedUp</option>
           <option>/</option>
         </select>
         <input name="second-num" id="second-num" />
@@ -87,21 +87,151 @@
     </section>
   </main>
 
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
   <script>
+    window.TrackJS && TrackJS.install({
+      token: "effce34abec444b0841d89ec78ec198e"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
+
+  <script>
+
+      
+
+    class ExpressionError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "Expression Error";
+      }
+
+    }
+
+    function check(expression) {
+      //console.log(expression);
+      let splitted = [];
+      splitted = expression.split(" ");
+      //alert(splitted[0] +  splitted[1] + splitted[2]);
+
+      if (/^[0-9]+$/.test(splitted[0]) == false || /^[0-9]+$/.test(splitted[2]) == false) {
+        throw new ExpressionError("Wrong Input: Must only contain digits");
+        console.log("threw an error")
+      }
+
+    }
+
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
+
       let output = document.querySelector('output');
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+
+      try {
+        // Perform checks on the expression
+        let str = `${firstNum} ${operator} ${secondNum}`;
+        check(str);
+
+      }
+
+      // Catch any errors
+      catch (err) {
+
+        if (err instanceof ExpressionError) {
+          console.log(err.name + '\n' + err.message);
+       
+        }
+        else {
+          throw err; // unknown error, rethrow it (**)
+        }
+        TrackJS.track(err);
+
+      }
+
+      // If the try block doesn't throw an error for the expression, we can evaluate as usual
+      finally {
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      }
     });
 
-    let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
-    // Start your code here
-    // You may move this JS to another file if you wish
+
+    // Event Handlers 
+
+    let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
+    
+    errorBtns.forEach(setHandle);
+
+    function setHandle(button) {
+      switch (button.innerText) {
+
+        case "Console Log":
+          button.addEventListener("click", () => console.log("Console Log Demo"));
+          break;
+
+        case "Console Error":
+          button.addEventListener("click", () => console.error("Console Error Demo"));
+          break;
+
+        case "Console Count":
+          button.addEventListener("click", () => console.count());
+          break;
+
+        case "Console Warn":
+          button.addEventListener("click", () => console.warn("Console Warn Demo"));
+          break;
+
+        case "Console Assert":
+          const errorMsg = "2+2 is not 5";
+          button.addEventListener("click", () => console.assert(2 + 2 == 5, errorMsg));
+          break;
+
+        case "Console Clear":
+          button.addEventListener("click", () => console.clear());
+          break;
+
+        case "Console Dir":
+          button.addEventListener("click", () => console.dir(button));
+          break;
+
+        case "Console dirxml":
+          button.addEventListener("click", () => console.dirxml(button));
+          break;
+
+        case "Console Group Start":
+          button.addEventListener("click", () => console.group());
+          break;
+
+
+        case "Console Groupe End":
+          button.addEventListener("click", () => console.groupEnd());
+          break;
+
+        case "Console Table":
+          button.addEventListener("click", () => console.table(["apple", "pear", "orange", "banana", "strawberry"]));
+          break;
+
+        case "Start Timer":
+          button.addEventListener("click", () => console.time());
+          break;
+
+        case "End Timer":
+          button.addEventListener("click", () => console.timeEnd());
+          break;
+
+        case "Console Trace":
+          button.addEventListener("click", () => console.trace(button));
+          break;
+
+        case "Trigger a Global Error":
+          button.addEventListener("click", () => console.log(undefinedVariable))
+          break;
+      }
+    }
+
+
   </script>
 </body>
 
