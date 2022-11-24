@@ -96,9 +96,6 @@
   </script>
 
   <script>
-
-      
-
     class ExpressionError extends Error {
       constructor(message) {
         super(message);
@@ -141,7 +138,7 @@
 
         if (err instanceof ExpressionError) {
           console.log(err.name + '\n' + err.message);
-       
+
         }
         else {
           throw err; // unknown error, rethrow it (**)
@@ -161,7 +158,7 @@
     // Event Handlers 
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
-    
+
     errorBtns.forEach(setHandle);
 
     function setHandle(button) {
